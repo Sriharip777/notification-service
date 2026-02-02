@@ -1,0 +1,5 @@
+spring:
+  profiles: prod
+  data:
+    mongodb:
+      uri:mongodb+srv://educonnect:educonnect123@educonnect.sjmtr4c.mongodb.net/?appName=educonnect

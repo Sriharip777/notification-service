@@ -1,0 +1,12 @@
+{
+  "collection": "notification_templates",
+  "description": "Stores notification templates",
+  "schema": {
+    "templateCode": "string",
+    "type": "EMAIL | PUSH",
+    "subject": "string",
+    "templatePath": "string",
+    "active": "boolean",
+    "createdAt": "date"
+  }
+}

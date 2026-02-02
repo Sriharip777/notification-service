@@ -1,0 +1,14 @@
+{
+  "WELCOME_PUSH": {
+    "title": "Welcome 🎉",
+    "body": "Welcome {{name}} to our tutoring platform!"
+  },
+  "CLASS_REMINDER": {
+    "title": "Class Reminder ⏰",
+    "body": "Your class starts at {{time}}"
+  },
+  "PAYMENT_SUCCESS": {
+    "title": "Payment Successful 💳",
+    "body": "Payment of ₹{{amount}} received"
+  }
+}

@@ -1,0 +1,18 @@
+name: CD - Notification Service
+
+on:
+  workflow_run:
+    workflows: ["CI - Notification Service"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Script
+        run: echo "Deployment handled via scripts/deploy.sh"

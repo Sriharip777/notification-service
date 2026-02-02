@@ -1,0 +1,16 @@
+{
+  "collection": "notifications",
+  "description": "Stores all notification events",
+  "schema": {
+    "userId": "string",
+    "type": "EMAIL | PUSH",
+    "recipient": "string",
+    "templateCode": "string",
+    "payload": "object",
+    "status": "PENDING | SENT | FAILED",
+    "retryCount": "number",
+    "failureReason": "string",
+    "createdAt": "date",
+    "sentAt": "date"
+  }
+}
