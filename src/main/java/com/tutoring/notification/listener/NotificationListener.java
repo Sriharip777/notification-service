@@ -19,7 +19,6 @@ public class NotificationListener {
 
         try {
             log.info("📩 Received Notification Event");
-            log.info("Email: {}", event.getEmail());
             log.info("Subject: {}", event.getSubject());
             log.info("Message: {}", event.getMessage());
 
