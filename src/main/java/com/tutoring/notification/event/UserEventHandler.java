@@ -15,18 +15,15 @@ public class UserEventHandler {
 
     /**
      * Handles USER_CREATED event
-     * Expected eventData:
-     * {
-     *   "email": "user@example.com",
-     *   "name": "Manoj"
-     * }
      */
     public void handle(Map<String, Object> eventData) {
 
-        EmailNotificationRequest request = new EmailNotificationRequest();
-        request.setTo((String) eventData.get("email"));
-        request.setTemplateCode("user-welcome");
-        request.setPayload(eventData);
+        EmailNotificationRequest request =
+                EmailNotificationRequest.builder()
+                        .to((String) eventData.get("email"))
+                        .templateCode("user-welcome")
+                        .payload(eventData)
+                        .build();
 
         notificationService.sendEmail(request);
     }

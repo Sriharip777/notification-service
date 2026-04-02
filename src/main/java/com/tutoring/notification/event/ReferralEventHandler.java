@@ -15,10 +15,12 @@ public class ReferralEventHandler {
 
     public void handle(Map<String, Object> eventData) {
 
-        EmailNotificationRequest request = new EmailNotificationRequest();
-        request.setTo((String) eventData.get("email"));
-        request.setTemplateCode("referral-invite");
-        request.setPayload(eventData);
+        EmailNotificationRequest request =
+                EmailNotificationRequest.builder()
+                        .to((String) eventData.get("email"))
+                        .templateCode("referral-invite")
+                        .payload(eventData)
+                        .build();
 
         notificationService.sendEmail(request);
     }

@@ -7,18 +7,10 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class FirebasePushProvider {
+public class FirebasePushProvider implements PushProvider {
 
-    public void sendPush(String deviceToken, Map<String, Object> payload) {
-
-        // TEMP IMPLEMENTATION (until Firebase SDK is added)
-        log.info(
-                "📲 PUSH notification sent → deviceToken={}, payload={}",
-                deviceToken,
-                payload
-        );
-
-        // Later:
-        // FirebaseMessaging.getInstance().send(...)
+    @Override
+    public void sendPush(String token, String message) {
+        System.out.println("Sending push to " + token);
     }
 }

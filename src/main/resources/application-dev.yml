@@ -2,4 +2,4 @@ spring:
   profiles: dev
   data:
     mongodb:
-       uri:mongodb+srv://educonnect:educonnect123@educonnect.sjmtr4c.mongodb.net/?appName=educonnect
+      uri: mongodb://localhost:27017/notificationdb_dev

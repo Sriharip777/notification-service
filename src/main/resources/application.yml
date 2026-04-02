@@ -1,32 +1,95 @@
+# ============================================
+# SERVER CONFIGURATION
+# ============================================
 server:
   port: 8086
 
+
+# ============================================
+# SPRING CONFIGURATION
+# ============================================
 spring:
+
   application:
     name: notification-service
 
+
+  # ============================================
+  # MONGODB
+  # ============================================
   data:
     mongodb:
-      uri: mongodb+srv://educonnect:educonnect123@educonnect.sjmtr4c.mongodb.net/notification_service?retryWrites=true&w=majority
+      uri: mongodb+srv://educonnect:educonnect123@educonnect.sjmtr4c.mongodb.net/notification_db?retryWrites=true&w=majority
+      database: notification_db
+      auto-index-creation: true
 
+
+  # ============================================
+  # KAFKA (FINAL WORKING VERSION)
+  # ============================================
   kafka:
+
     bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+
     consumer:
-      group-id: notification-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      group-id: notification-service-group-final
+      auto-offset-reset: latest
+      enable-auto-commit: false
+
+
+      # ⭐ REQUIRED (Fixes SerializationException)
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+
+
       properties:
+
+        # Delegate deserializers
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+
+
+        # ⭐ MOST IMPORTANT FIX
+        spring.json.use.type.headers: false
+        spring.json.remove.type.headers: true
+
+        # ⭐ YOUR REAL DTO CLASS
+        spring.json.value.default.type: com.tcon.events.events.NotificationEvent
+
         spring.json.trusted.packages: "*"
 
+
+
+    producer:
+
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+      acks: all
+      retries: 3
+
+      properties:
+
+        enable.idempotence: true
+
+        # Prevent class header issues
+        spring.json.add.type.headers: false
+
+
+
+  # ============================================
+  # MAIL CONFIGURATION
+  # ============================================
   mail:
+
     host: smtp.gmail.com
     port: 587
-    username: manojtamtam2000@gmail.com
-    password: kcxdpmvanvonbipe
+
+    username: manojtamtam02@gmail.com
+    password: mxsygoejvfsczirs
+
     properties:
       mail:
         smtp:
@@ -34,19 +97,106 @@ spring:
           starttls:
             enable: true
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
 
+
+# ============================================
+# EUREKA SERVICE DISCOVERY
+# ============================================
+eureka:
+
+  client:
+
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+    fetch-registry: true
+    register-with-eureka: true
+
+
+  instance:
+
+    prefer-ip-address: true
+
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+
+
+# ============================================
+# ACTUATOR + ZIPKIN
+# ============================================
 management:
+
+  tracing:
+    enabled: true
+
+    sampling:
+      probability: 1.0
+
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+
   endpoints:
+
     web:
       exposure:
-        include: health,info,metrics,env,loggers
+        include: health,info,metrics,env,loggers,prometheus
+
+
   endpoint:
+
     health:
       show-details: always
 
-security:
-  api-key: my-secret-api-key-123
+
+  metrics:
+
+    export:
+
+      prometheus:
+        enabled: true
+
+
+
+# ============================================
+# RESILIENCE4J
+# ============================================
+resilience4j:
+
+  circuitbreaker:
+
+    instances:
+
+      emailService:
+
+        registerHealthIndicator: true
+
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+
+        minimumNumberOfCalls: 5
+
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+
+        slowCallDurationThreshold: 2s
+
+        waitDurationInOpenState: 30s
+
+        permittedNumberOfCallsInHalfOpenState: 3
+
+
+
+# ============================================
+# LOGGING
+# ============================================
+logging:
+
+  level:
+
+    root: INFO
+    org.springframework.kafka: INFO
+    com.tutoring.notification: DEBUG
